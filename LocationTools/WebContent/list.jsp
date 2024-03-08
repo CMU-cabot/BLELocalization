@@ -105,7 +105,11 @@ THE SOFTWARE.
 						String group = obj.optString("group", "");
 				%>
 				<tr>
-					<td class="db_name"><a href="<%=db%>/floorplans.jsp"><%=db%></a></td>
+					<td class="db_name">
+						<span style="font-weight: bold"><%=db%></span> |
+						<a href="<%=db%>/cabot_mapping.jsp">CaBot Mapping</a> |
+						<a href="<%=db%>/floorplans.jsp">Floorplans</a>
+					</td>
 					<td class="group_name editable"><%=group%></td>
 				</tr>
 				<%

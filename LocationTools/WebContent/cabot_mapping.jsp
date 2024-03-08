@@ -38,7 +38,7 @@ THE SOFTWARE.
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Floor Plans <%= dbname %></title>
+<title>CaBot Mapping <%= dbname %></title>
 
 <script type="text/javascript"
 	src="js/lib/jquery/jquery-1.11.3.min.js"></script>
@@ -68,6 +68,7 @@ THE SOFTWARE.
 <script type="text/javascript" src="js/floorplan_editor.js"></script>
 <script type="text/javascript" src="js/overlay.js"></script>
 <script type="text/javascript" src="js/floorplans.js"></script>
+<script type="text/javascript" src="js/cabot_mapping.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
 <script type="text/javascript" src="js/commons.js"></script>
 <script type="text/javascript" src="js/hokoukukan.js"></script>
@@ -77,8 +78,8 @@ THE SOFTWARE.
 	<a href="floorplans.jsp?logout=true">log out</a> |
 	<a href="user_password.jsp?redirect_url=floorplans.jsp">change password</a> |
 	<a href="../">db list</a> | 
-	<a href="cabot_mapping.jsp">Manage CaBot Mapping</a> |
-	<span style="font-weight: bold">Manage Floor Plan</span> |
+	<span style="font-weight: bold">Manage CaBot Mapping</span> |
+	<a href="floorplans.jsp">Manage Floor Plan</a> |
 	<a href="sampling.jsp">Manage Samplings</a> |
 	<a href="data_composer.jsp">Data Compose Tool</a>
 	<br>
@@ -86,28 +87,18 @@ THE SOFTWARE.
 	<div id='message' style='color: red;'></div>
 
 	<div class="floorplan_hide_edit ref_hide_edit">
-		<h1 class="ui-widget-header">Floor Plans <%= dbname %></h1>
+		<h1 class="ui-widget-header">CaBot Mapping <%= dbname %></h1>
 		<div style="margin-top: -10px; margin-bottom: 10px;">
-			<button id="floorplanAdd_button" onclick="showFloorplanForm()">Add
-				a new floorplan</button>
-			<!--button id="reset_filter" onclick="resetFilter()">Reset
-				filter</button-->
 			<div class="fileUpload btn btn-primary">
-				<span>Import floormaps.json</span>
-				<input type="file" id="import_floorplans" class="upload" onchange="importFloorplans(this.files[0])"/>
+				<span>Import MapService attachments</span>
+				<input type="file" id="import_attachments" webkitdirectory directory multiple
+				 class="upload" onchange="importAttachments(this.files)"/>
 			</div>
-			<button id="editSelectedFloorplans" onclick="editSelectedFloorplans()">Edit selected floorplans</button>
-			<button id="exportFloorplans" onclick="exportFloorplans('floormaps.zip')">Export for MapServer</button>
-			<input type="text" id="findBeacon" placeholder="major-minor"></input>
-			<button id="findBeaconBtn" onclick="findBeacon()">Find Beacon</button>
-			<button id="findDupBeacons" onclick="findDupBeacons()">Find Duplicated Beacons</button>
-			<br>
 			<div class="fileUpload btn btn-primary">
-				<span>Load route GeoJSON</span>
-				<input type="file" id="load_route_geojson_file" class="upload" onchange="loadRouteGeoJSON(this.files[0])"/>
+				<span>Import Mapping Data</span>
+				<input type="file" id="import_mapping_data" webkitdirectory directory multiple
+				 class="upload" onchange="importMappingData(this.files)"/>
 			</div>
-			<label class="routeTool"><input type="number" id="default_width" value="5" style="width: 3em">Default Link Width (meters)</label>
-			<div id="findBeaconResult"></div>
 		</div>
 		<div class="ui-widget-content" id="data_table"></div>
 	</div>
@@ -187,17 +178,7 @@ THE SOFTWARE.
 				<input type="submit" /> <input type="reset" value="Cancel" />
 			</p>
 		</form>
-	</div>
-	
-	
-	<div class="" id="floorplan_div">
-		<h1 class="ui-widget-header">Floor Plan</h1>
-		<div id="menu"></div>
-		<div id="mapdiv"
-			style="min-width: 960px; min-height: 540px; height: 98vh; height: calc(100vh - 16px); border: 1px solid black; position: relative;"></div>
-	</div>
-	
-	
+	</div>	
 	
 	<div class="">
 		<h1 class="ui-widget-header">Anchor</h1>
@@ -213,7 +194,12 @@ THE SOFTWARE.
 			style="min-width: 960px; min-height: 540px; height: 98vh; height: calc(100vh - 16px); border: 1px solid black; position: relative;"></div>
 	</div>
 	
-	
+	<div class="" id="floorplan_div">
+		<h1 class="ui-widget-header">Floor Plan</h1>
+		<div id="menu"></div>
+		<div id="mapdiv"
+			style="min-width: 960px; min-height: 540px; height: 98vh; height: calc(100vh - 16px); border: 1px solid black; position: relative;"></div>
+	</div>
 	
 </body>
 </html>
