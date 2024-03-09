@@ -277,7 +277,8 @@ function showMapOnGlobal(opt) {
 				console.log(data);
 				floorplans = data;
 				createFloorplanTable(data).appendTo('#data_table').dataTable({
-					'stateSave': true
+					'stateSave': true,
+					'scrollY': 200,
 				});
 			},
 			'error' : function(xhr, text, error) {
@@ -645,7 +646,7 @@ function showMapOnGlobal(opt) {
 			tbody.append(createTableRow([ img, type_text, md.name, num + " files", obj.group, obj.floor, select, actions ], '<td>'));
 		});
 
-		tbody.append(createTableRow([ "", "", "Total", total + " files", "", "", "", "" ], '<td>'));
+		// tbody.append(createTableRow([ "", "", "Total", total + " files", "", "", "", "" ], '<td>'));
 		return table;
 	}
 

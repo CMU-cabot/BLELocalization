@@ -75,7 +75,7 @@ function importAttachments(files){
         };
         var uploadData = {
             'type' : 'floormap',
-            'group' : 'attachments',
+            'group' : 'MapService',
             'floor' : floorplan.floor,
             'origin_x' : floorplan.origin_x,
             'origin_y' : floorplan.origin_y,

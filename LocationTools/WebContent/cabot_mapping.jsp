@@ -62,6 +62,9 @@ THE SOFTWARE.
 .routeTool-visible {
 	display: unset;
 }
+table.dataTable tbody td {
+	padding: 0px 10px !important;
+}
 </style>
 <script type="text/javascript" src="js/datautils.js"></script>
 <script type="text/javascript" src="js/mapview.js"></script>
