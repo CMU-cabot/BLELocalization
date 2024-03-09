@@ -597,10 +597,26 @@ function showMapOnGlobal(opt) {
 			}), createButton('edit', function() {
 				showFloorplanForm(obj);
 			}), createButton('delete', function() {
+				function deleteAttachment(callback) {
+					let head =  obj.attachment.shift();
+					if (head) {
+						deleteData("file", head.id, null, function() {
+							deleteAttachment(callback);
+						});
+					} else {
+						callback();
+					}
+				}
 				deleteData(floorplanDataType, id, md.name, function() {
 					deleteData("file", obj.filename, null, function() {
 						deleteData("file", obj.filename+"-thumb", null, function() {
-							refresh();
+							if (obj.attachment) {
+								deleteAttachment(function() {
+									refresh();
+								});
+							} else {
+								refresh();
+							}
 						});
 					});
 				});
