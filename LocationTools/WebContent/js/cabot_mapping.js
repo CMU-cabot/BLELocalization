@@ -91,7 +91,7 @@ function importAttachments(files){
             uploadData.height = height;
             uploadFile(imageFile, (filename) => {
                 uploadData.filename = filename
-                uploadFloorplan(matadata, uploadData, (data) => {
+                uploadFloorplan(metadata, uploadData, (data) => {
                     console.log(data);
                     callback();
                 });
@@ -192,11 +192,13 @@ function importMappingData(files) {
                 }
             }
 
-            uploadFile(imageFile, (filename, width, height) => {
+            getImageSize(imageFile, (width, height) => {
                 uploadData.width = width;
                 uploadData.height = height;
-                uploadData.filename = filename;
-                uploadAttachment();
+                uploadFile(imageFile, (filename) => {
+                    uploadData.filename = filename;
+                    uploadAttachment();
+                });
             });
         }
         fr.readAsText(yamlFile);
@@ -229,7 +231,7 @@ function getImageSize(imageFile, callback) {
     reader.onload = function () {
         var img = new Image();
         img.onload = function () {
-            callback(img.width, image.height);
+            callback(img.width, img.height);
         }
         img.src = reader.result;
     }
