@@ -102,7 +102,10 @@ THE SOFTWARE.
 			</div>
 			|
 			<button id="exportMaps" onclick="exportMaps('maps.zip')">
-				Export Maps
+				Export Maps (zip)
+			</button>
+			<button id="exportMapsYaml" onclick="exportMaps('maps.yaml')">
+				Export Maps (yaml only)
 			</button>
 		</div>
 		<div class="ui-widget-content" id="data_table"></div>

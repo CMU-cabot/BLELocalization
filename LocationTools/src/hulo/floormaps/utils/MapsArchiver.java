@@ -58,17 +58,29 @@ public class MapsArchiver {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
 		}		
-
+		OutputStream os = response.getOutputStream();
 		response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s\"", filename));
 		String mapsJsonString = request.getParameter("maps");
 
-		OutputStream os = response.getOutputStream();
+		ObjectMapper jsonMapper = new ObjectMapper();
+		JsonNode jsonNodeTree = jsonMapper.readTree(mapsJsonString);
+		JSONObject mapsJson = (JSONObject) JSON.parse(mapsJsonString);
+
+		if (filename.equals("maps.yaml")) {
+			YAMLMapper yamlMapper = new YAMLMapper();
+			os.write(yamlMapper.writeValueAsString(mapsJson).getBytes("UTF-8"));
+			os.close();
+			return;
+		}
+
 		try (ZipOutputStream zos = new ZipOutputStream(os)) {
-			ObjectMapper jsonMapper = new ObjectMapper();
-			JsonNode jsonNodeTree = jsonMapper.readTree(mapsJsonString);
-			write(jsonNodeTree.get("maps"), zos);
-			System.out.println(mapsJsonString);
-			JSONObject mapsJson = (JSONObject) JSON.parse(mapsJsonString);
+			// write maps.yaml
+			YAMLMapper yamlMapper = new YAMLMapper();
+			zos.putNextEntry(new ZipEntry("maps/maps.yaml"));
+			zos.write(yamlMapper.writeValueAsString(jsonNodeTree.get("maps")).getBytes("UTF-8"));
+			zos.closeEntry();
+
+			// write attachment files
 			JSONArray attachments = mapsJson.getJSONArray("attachment");
 			for (Object obj : attachments) {
 				JSONObject attachment = (JSONObject) obj;
@@ -85,10 +97,6 @@ public class MapsArchiver {
 	}
 
 	public static void write(JsonNode mapsJson, ZipOutputStream zos) throws IOException {
-		YAMLMapper yamlMapper = new YAMLMapper();
-		zos.putNextEntry(new ZipEntry("maps/maps.yaml"));
-		zos.write(yamlMapper.writeValueAsString(mapsJson).getBytes("UTF-8"));
-		zos.closeEntry();
 	}
 
 }

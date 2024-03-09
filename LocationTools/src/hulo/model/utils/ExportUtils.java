@@ -73,7 +73,7 @@ public class ExportUtils {
 			}
 			return;
 		}
-		if ("maps.zip".equals(format)) {
+		if ("maps.zip".equals(format) || "maps.yaml".equals(format)) {
 			try {
 				MapsArchiver.export(filename, request, response);
 			} catch (JSONException e) {

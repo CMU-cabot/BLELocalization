@@ -1,4 +1,4 @@
-function exportMaps() {
+function exportMaps(exportName) {
     let maps = floorplans.filter((e) => { return e.group == "mapping";});
     data = {
         maps: {
@@ -40,8 +40,8 @@ function exportMaps() {
 
     var actionURL = 'data?' + $.param({
         'dummy' : new Date().getTime(),
-        'export' : 'maps.zip',
-        'filename' : 'maps.zip'
+        'export' : exportName,
+        'filename' : exportName,
     });
     $('form#maps_form').remove();
     var form = $('<form>', {
