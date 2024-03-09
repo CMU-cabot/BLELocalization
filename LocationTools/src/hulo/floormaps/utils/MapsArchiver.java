@@ -68,7 +68,7 @@ public class MapsArchiver {
 
 		if (filename.equals("maps.yaml")) {
 			YAMLMapper yamlMapper = new YAMLMapper();
-			os.write(yamlMapper.writeValueAsString(mapsJson).getBytes("UTF-8"));
+			os.write(yamlMapper.writeValueAsString(jsonNodeTree).getBytes("UTF-8"));
 			os.close();
 			return;
 		}
