@@ -72,6 +72,16 @@ table.dataTable tbody td {
 	border: 1px solid black;
 	position: relative;
 }
+div.list_container {
+	height: 500px;
+	position: relative;
+	overflow-y: auto;
+}
+div.maps_container {
+	height: calc(100vh - 516px);
+	position: relative;
+	overflow-y: auto;
+}
 
 </style>
 <script type="text/javascript" src="js/datautils.js"></script>
@@ -88,6 +98,7 @@ table.dataTable tbody td {
 </script>
 </head>
 <body>
+	<div class="list_container">
 	<span style="font-weight: bold"><%=profile.getString("_id")%></span>
 	<a href="floorplans.jsp?logout=true">log out</a> |
 	<a href="user_password.jsp?redirect_url=cabot_mapping.jsp">change password</a> |
@@ -199,7 +210,9 @@ table.dataTable tbody td {
 			</p>
 		</form>
 	</div>	
-	
+	</div>
+
+	<div class="maps_container">
 	<div class="">
 		<h2 class="ui-widget-header">Anchor</h2>
 		<div id="menu2">
@@ -218,6 +231,6 @@ table.dataTable tbody td {
 		<div id="menu"></div>
 		<div id="mapdiv"></div>
 	</div>
-	
+	</div>
 </body>
 </html>

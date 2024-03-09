@@ -266,7 +266,7 @@ function showMapOnGlobal(opt) {
 				floorplans = data;
 				createFloorplanTable(data).appendTo('#data_table').dataTable({
 					'stateSave': true,
-					'scrollY': 200,
+					'scrollY': 230,
 				});
 			},
 			'error' : function(xhr, text, error) {
