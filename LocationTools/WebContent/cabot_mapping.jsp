@@ -65,6 +65,14 @@ THE SOFTWARE.
 table.dataTable tbody td {
 	padding: 0px 10px !important;
 }
+#mapdiv, #mapdiv2 {
+	min-width: 960px;
+	min-height: 540px;
+	height: calc(32vh - 16px);
+	border: 1px solid black;
+	position: relative;
+}
+
 </style>
 <script type="text/javascript" src="js/datautils.js"></script>
 <script type="text/javascript" src="js/mapview.js"></script>
@@ -92,7 +100,7 @@ table.dataTable tbody td {
 	<div id='progress' style='color: gray;'></div>
 
 	<div class="floorplan_hide_edit ref_hide_edit">
-		<h1 class="ui-widget-header">CaBot Mapping <%= dbname %></h1>
+		<h2 class="ui-widget-header">CaBot Mapping <%= dbname %></h2>
 		<div style="margin-top: -10px; margin-bottom: 10px;">
 			<div class="fileUpload btn btn-primary">
 				<span>Import MapService attachments</span>
@@ -193,24 +201,22 @@ table.dataTable tbody td {
 	</div>	
 	
 	<div class="">
-		<h1 class="ui-widget-header">Anchor</h1>
+		<h2 class="ui-widget-header">Anchor</h2>
 		<div id="menu2">
-		Latitude:<input type="number" id="latitude" step="0.000001" autocomplete="off"></input>
-		Longitude:<input type="number" id="longitude" step="0.000001" autocomplete="off"></input>
-		Rotate:<input type="number" id="anchor_rotate" step="0.1" min="-180" max="180" autocomplete="off"></input>
-		Opacity:<input type="number" id="opacity" step="0.05" min="0" max="1" value="0.8" autocomplete="off"></input>
+		Latitude:<input class="number" id="latitude" step="0.000001" autocomplete="off"></input>
+		Longitude:<input class="number" id="longitude" step="0.000001" autocomplete="off"></input>
+		Rotate:<input class="number" id="anchor_rotate" step="0.1" min="-180" max="180" autocomplete="off"></input>
+		Opacity:<input class="number" id="opacity" step="0.05" min="0" max="1" value="0.8" autocomplete="off"></input>
 		<select multiple id="overlays"></select>
 		<button id="save">Save</button>
 		</div>
-		<div id="mapdiv2"
-			style="min-width: 960px; min-height: 540px; height: 98vh; height: calc(100vh - 16px); border: 1px solid black; position: relative;"></div>
+		<div id="mapdiv2"></div>
 	</div>
 	
 	<div class="" id="floorplan_div">
-		<h1 class="ui-widget-header">Floor Plan</h1>
+		<h2 class="ui-widget-header">Floor Plan</h2>
 		<div id="menu"></div>
-		<div id="mapdiv"
-			style="min-width: 960px; min-height: 540px; height: 98vh; height: calc(100vh - 16px); border: 1px solid black; position: relative;"></div>
+		<div id="mapdiv"></div>
 	</div>
 	
 </body>

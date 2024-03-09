@@ -91,33 +91,21 @@ function showAnchorMap() {
   $("#is_tile").change(function() {
 	  showFloorplanFormClass();
   });
-  $("#latitude").on('change mouseup keyup', function() {
-	  var val = parseFloat($(this).val());
-	  if (_obj.lat == val) return;
-	  _obj.lat = val;
-	  showMapOnGlobal(_obj);
-  });
-  $("#longitude").on('change mouseup keyup', function() {
-	  var val = parseFloat($(this).val());
-	  if (_obj.lng == val) return;
-	  _obj.lng = val;
-	  showMapOnGlobal(_obj);
-  });
-  var _opacity;
-  $("#opacity").on('change mouseup keyup', function() {
-	  var val = parseFloat($(this).val());
-	  if (_opacity == val) return;
-	  _opacity = val;
-	  for(var k in regionOverlays) {
+  function mapUpdate() {
+	console.log("mapUpdate");
+	_obj.lat = parseFloat($("#latitude").val());
+	_obj.lng = parseFloat($("#longitude").val());
+	_obj.rotate = parseFloat($("#anchor_rotate").val());
+	showMapOnGlobal(_obj);
+
+	var opacity = parseFloat($("#opacity").val());
+	for(var k in regionOverlays) {
 		regionOverlay = regionOverlays[k];
-  	    regionOverlay.setOption({opacity:val});
-	  }
-  });
-  $("#anchor_rotate").on('change mouseup keyup', function() {
-	  var val = parseFloat($(this).val());
-	  if (_obj.rotate == val) return;
-	  _obj.rotate = val;
-	  showMapOnGlobal(_obj);
+		regionOverlay.setOption({opacity: opacity});
+	}
+  }
+  $("#latitude, #longitude, #opacity, #anchor_rotate").on('change mouseup keyup', mapUpdate).spinner({
+	spin: mapUpdate
   });
   $("#overlays").change(function() {
 	  for(var i = 0; i < this.options.length; i++) {
