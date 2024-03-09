@@ -1,5 +1,25 @@
 function exportMaps(exportName) {
     let maps = floorplans.filter((e) => { return e.group == "mapping";});
+    data = getMapsJson(maps);
+
+    var actionURL = 'data?' + $.param({
+        'dummy' : new Date().getTime(),
+        'export' : exportName,
+        'filename' : exportName,
+    });
+    $('form#maps_form').remove();
+    var form = $('<form>', {
+        'id' : 'maps_form',
+        'method' : 'post',
+        'action' : actionURL
+    }).append($('<input>', {
+        'type' : 'hidden',
+        'name' : 'maps',
+        'value' : JSON.stringify(data),
+    })).appendTo($('body')).submit();
+}
+
+function getMapsJson(maps) {
     data = {
         maps: {
             map_list: []
@@ -37,22 +57,7 @@ function exportMaps(exportName) {
             map_filename: `package://${DB_NAME}/maps/${name}.yaml`,
         })
     });
-
-    var actionURL = 'data?' + $.param({
-        'dummy' : new Date().getTime(),
-        'export' : exportName,
-        'filename' : exportName,
-    });
-    $('form#maps_form').remove();
-    var form = $('<form>', {
-        'id' : 'maps_form',
-        'method' : 'post',
-        'action' : actionURL
-    }).append($('<input>', {
-        'type' : 'hidden',
-        'name' : 'maps',
-        'value' : JSON.stringify(data),
-    })).appendTo($('body')).submit();
+    return data;
 }
 
 /*
@@ -128,12 +133,19 @@ function importAttachments(files){
 }
 
 function importMappingData(files) {
-    function processMap(key, files, callback) {
+    function processMap(key, files, mapProgress, callback) {
         var yamlFile = null;
         var imageFile = null;
         var attachments = [];
         for(const file of files) {
             var path = file.webkitRelativePath || file.name;
+
+            // ignore hidden files
+            var lastPathComponent = path.split("/").pop();
+            if (lastPathComponent.startsWith(".")) {
+                continue;
+            }
+
             if (path.includes(".txt")) {
                 console.log(".txt", path);
                 yamlFile = file;
@@ -177,12 +189,22 @@ function importMappingData(files) {
                 'attachment': [],
             };
 
+            let totalUploadCount = 2 + attachments.length;
+            var count = 0;
+            function progress() {
+                count++;
+                $("#progress").text(`upload progress: ${count}/${totalUploadCount} files - ${mapProgress()}`);
+            }
             function uploadAttachment() {
                 if (attachments.length == 0) {
-                    uploadFloorplan(metadata, uploadData, callback);
+                    uploadFloorplan(metadata, uploadData, function() {
+                        progress();
+                        callback();
+                    });
                 } else {
                     attachment = attachments.shift()
                     uploadFile(attachment, (filename) => {
+                        progress();
                         uploadData.attachment.push({
                             "filename": attachment.name,
                             "id": filename,
@@ -196,6 +218,7 @@ function importMappingData(files) {
                 uploadData.width = width;
                 uploadData.height = height;
                 uploadFile(imageFile, (filename) => {
+                    progress();
                     uploadData.filename = filename;
                     uploadAttachment();
                 });
@@ -215,11 +238,15 @@ function importMappingData(files) {
     }
 
     let keys = Object.keys(prefixMap);
+    function progress() {
+        return `${keys.length - count} maps to be uploaded`
+    }
     var count = 0;
     for (const key of keys) {
-        processMap(key, prefixMap[key], callback = () => {
+        processMap(key, prefixMap[key], progress, callback = () => {
             count++;
             if (count == keys.length) {
+                $("#progress").text("");
                 refresh();
             }
         });

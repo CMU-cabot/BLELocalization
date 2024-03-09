@@ -89,6 +89,7 @@ table.dataTable tbody td {
 	<br>
 
 	<div id='message' style='color: red;'></div>
+	<div id='progress' style='color: gray;'></div>
 
 	<div class="floorplan_hide_edit ref_hide_edit">
 		<h1 class="ui-widget-header">CaBot Mapping <%= dbname %></h1>
