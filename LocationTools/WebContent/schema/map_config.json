@@ -1,0 +1,52 @@
+{
+    "type": "object",
+    "title": "Map Config",
+    "required": ["map_list", "anchor"],
+    "properties": {
+        "anchor": {
+            "type": "object",
+            "required": [],
+            "properties": {
+                "latitude": {
+                    "type": "float",
+                    "minimum": -180.0,
+                    "maximum": 180.0
+                },
+                "longitude": {
+                    "type": "float",
+                    "minimum": -90.0,
+                    "maximum": 90.0
+                },
+                "rotate": {
+                    "type": "float",
+                    "minimum": -180.0,
+                    "maximum": 180.0
+                },
+                "floor": {
+                    "type": "integer"
+                }
+            }
+        },
+        "map_list": {
+            "type": "array",
+            "title": "Map List (array)",
+            "uniqueItem": true,
+            "items": {
+                "type": "object",
+                "title": "Map",
+                "properties": {
+                    "node_id":  { "type": "string", "readOnly": true },
+                    "frame_id": { "type": "string", "readOnly": true },
+                    "area":     { "type": "integer", "readOnly": true },
+                    "floor":    { "type": "integer", "readOnly": true },
+                    "latitude": { "type": "float", "readOnly": true },
+                    "longitude":{ "type": "float", "readOnly": true },
+                    "rotate":   { "type": "float", "readOnly": true },
+                    "load_state_filename": { "type": "string", "readOnly": true },
+                    "samples_filename":    { "type": "string", "readOnly": true },
+                    "map_filename":        { "type": "string", "readOnly": true }
+                }
+            }
+        }
+    }
+}

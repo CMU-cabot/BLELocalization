@@ -1,6 +1,7 @@
 function exportMaps(exportName) {
     let maps = floorplans.filter((e) => { return e.group == "mapping";});
-    data = getMapsJson(maps);
+    let selected_map = $('input[group="anchor"]:checked').prop("obj");
+    data = getMapsJson(maps, selected_map);
 
     var actionURL = 'data?' + $.param({
         'dummy' : new Date().getTime(),
@@ -19,14 +20,13 @@ function exportMaps(exportName) {
     })).appendTo($('body')).submit();
 }
 
-function getMapsJson(maps) {
+function getMapsJson(maps, selected_map) {
     data = {
         maps: {
             map_list: []
         },
         attachment: []
     };
-    let selected_map = $('input[group="anchor"]:checked').prop("obj");
     var floors = {}
     maps.forEach((f) => {
         if (f.attachment !== undefined) {

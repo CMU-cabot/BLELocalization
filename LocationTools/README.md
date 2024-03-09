@@ -38,19 +38,22 @@ SOFTWARE.
 - [OpenLayers 2.13.1](http://openlayers.org/two/) (BSD License)
 - [jQuery-UI 1.11.4](https://jqueryui.com/) (MIT License)
 - [DataTables 1.10.10](https://datatables.net/) (MIT License)
+- [JsonEditor 2.14.1](https://github.com/json-editor/json-editor) (MIT License)
 - [mongo-java-driver 3.4.0](https://github.com/mongodb/mongo-java-driver) (Apache License 2.0)
+- [spectre css 0.5.9](https://github.com/picturepan2/spectre) (MIT License)
 
 ### library locations
-- LocationService/WebContent/js/lib/
+- LocationTools/WebContent/js/lib/
   - jquery/jquery-1.11.3.js
   - jquery/jquery-1.11.3.min.js
   - OpenLayers-2.13.1/
   - jquery-ui-1.11.4/
   - DataTables-1.10.10/
- 
+  - jsoneditor/
+- LocationTool/WebContent/css/
+  - spectre-0.5.9/
 - LocationService/WebContent/WEB-INF/lib
   - mongo-java-driver-3.4.0.jar
-
 
 ### Setup
 1. Download libraries

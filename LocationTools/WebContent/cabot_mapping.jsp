@@ -104,6 +104,7 @@ div.maps_container {
 	<a href="user_password.jsp?redirect_url=cabot_mapping.jsp">change password</a> |
 	<a href="../">db list</a> | 
 	<span style="font-weight: bold">Manage CaBot Mapping</span> |
+	<a href="map_config.jsp">Map Config</a> |
 	<a href="floorplans.jsp">Manage Floor Plan</a>
 	<br>
 
