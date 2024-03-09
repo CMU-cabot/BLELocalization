@@ -1,52 +1,420 @@
 {
     "type": "object",
+    "additionalProperties": false,
     "title": "Map Config",
-    "required": ["map_list", "anchor"],
+    "required": [
+        "anchor",
+        "map_list"
+    ],
+    "format": "normal",
     "properties": {
-        "anchor": {
-            "type": "object",
-            "required": [],
-            "properties": {
-                "latitude": {
-                    "type": "float",
-                    "minimum": -180.0,
-                    "maximum": 180.0
-                },
-                "longitude": {
-                    "type": "float",
-                    "minimum": -90.0,
-                    "maximum": 90.0
-                },
-                "rotate": {
-                    "type": "float",
-                    "minimum": -180.0,
-                    "maximum": 180.0
-                },
-                "floor": {
-                    "type": "integer"
-                }
+        "floor_localizer": {
+            "title": "Floor Localizer Type",
+            "$ref": "#/definitions/localizer"
+        },
+        "local_localizer": {
+            "title": "Local Localizer Type",
+            "$ref": "#/definitions/localizer"
+        },
+        "use_ble": {
+            "title": "Use BLE",
+            "type": "boolean",
+            "default": true
+        },
+        "use_wifi": {
+            "title": "Use WiFi",
+            "type": "boolean",
+            "default": true
+        },
+        "rssi_offset_list": {
+            "$ref": "#/definitions/rssi_offset_list"
+        },
+        "altitude_floor_estimator": {
+            "$ref": "#/definitions/altitude_floor_estimator"
+        },
+        "cartographer": {
+            "$ref": "#/definitions/cartographer_config"
+        },
+        "cartographer_qos_overrides": {
+            "$ref": "#/definitions/cartographer_qos_overrides"
+        },
+        "gnss": {
+            "title": "GNSS Configuration",
+            "$ref": "#/definitions/gnss",
+            "options": {
+                "collapsed": true
             }
+        },
+        "anchor": {
+            "title": "Anchor",
+            "$ref": "#/definitions/anchor"
         },
         "map_list": {
             "type": "array",
             "title": "Map List (array)",
             "uniqueItem": true,
             "items": {
-                "type": "object",
                 "title": "Map",
-                "properties": {
-                    "node_id":  { "type": "string", "readOnly": true },
-                    "frame_id": { "type": "string", "readOnly": true },
-                    "area":     { "type": "integer", "readOnly": true },
-                    "floor":    { "type": "integer", "readOnly": true },
-                    "latitude": { "type": "float", "readOnly": true },
-                    "longitude":{ "type": "float", "readOnly": true },
-                    "rotate":   { "type": "float", "readOnly": true },
-                    "load_state_filename": { "type": "string", "readOnly": true },
-                    "samples_filename":    { "type": "string", "readOnly": true },
-                    "map_filename":        { "type": "string", "readOnly": true }
+                "$ref": "#/definitions/map"
+            }
+        }
+    },
+    "definitions": {
+        "altitude_floor_estimator": {
+            "type": "object",
+            "additionalProperties": false,
+            "title": "Altitude Floor Estimator",
+            "options": {
+                "collapsed": true
+            },
+            "properties": {
+                "enable": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "height_per_floor": {
+                    "type": "float",
+                    "default": 4.0
+                },
+                "floor_threshold_height_coeff": {
+                    "type": "float",
+                    "default": 0.5
+                },
+                "height_diff_threshold_coeff": {
+                    "type": "float",
+                    "default": 0.2
+                },
+                "current_window": {
+                    "type": "integer",
+                    "default": 5
+                },
+                "history_window": {
+                    "type": "integer",
+                    "default": 10
                 }
             }
+        },
+        "anchor": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "latitude",
+                "longitude",
+                "rotate",
+                "floor"
+            ],
+            "properties": {
+                "latitude": {
+                    "$ref": "#/definitions/latitude"
+                },
+                "longitude": {
+                    "$ref": "#/definitions/longitude"
+                },
+                "rotate": {
+                    "$ref": "#/definitions/rotate"
+                },
+                "floor": {
+                    "$ref": "#/definitions/floor"
+                }
+            }
+        },
+        "cartographer_config": {
+            "type": "object",
+            "additionalProperties": false,
+            "title": "Cartographer Config",
+            "options": {
+                "collapsed": true
+            },
+            "$ref": "#/definitions/cartographer",
+            "properties": {
+                "init": {
+                    "title": "for initialization",
+                    "$ref": "#/definitions/cartographer"
+                },
+                "track": {
+                    "title": "for tracking",
+                    "$ref": "#/definitions/cartographer"
+                }
+            }
+        },
+        "cartographer_qos_overrides": {
+            "type": "object",
+            "title": "Cartographer QoS Overrides",
+            "options": {
+                "collapsed": true
+            },
+            "properties": {
+                "imu": {
+                    "type": "object",
+                    "properties": {
+                        "subscription": {
+                            "type": "object",
+                            "properties": {
+                                "depth": {
+                                    "type": "integer",
+                                    "default": 100
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "cartographer": {
+            "type": "object",
+            "options": {
+                "collapsed": true
+            },
+            "properties": {
+                "MAP_BUILDER.num_background_threads": {
+                    "type": "integer",
+                    "default": 6
+                },
+                "options.use_nav_sat": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "options.nav_sat_use_predefined_enu_frame": {
+                    "type": "boolean",
+                    "default": true
+                },
+                "options.nav_sat_predefined_enu_frame_latitude": {
+                    "type": "float",
+                    "default": 0.0
+                },
+                "options.nav_sat_predefined_enu_frame_longitude": {
+                    "type": "float",
+                    "default": 0.0
+                },
+                "TRAJECTORY_BUILDER_2D.max_range": {
+                    "type": "float",
+                    "default": 30.0
+                },
+                "TRAJECTORY_BUILDER_2D.submaps.num_range_data": {
+                    "type": "float",
+                    "default": 30
+                },
+                "TRAJECTORY_BUILDER.pure_localization_trimmer.max_submaps_to_keep": {
+                    "type": "integer",
+                    "default": 2
+                },
+                "POSE_GRAPH.optimize_every_n_nodes": {
+                    "type": "integer",
+                    "default": 5
+                },
+                "POSE_GRAPH.constraint_builder.min_score": {
+                    "type": "float",
+                    "default": 0.4
+                },
+                "POSE_GRAPH.constraint_builder.fast_correlative_scan_matcher.linear_search_window": {
+                    "type": "float",
+                    "default": 15.0
+                },
+                "POSE_GRAPH.optimization_problem.fixed_frame_pose_translation_weight": {
+                    "type": "float",
+                    "default": 1e4
+                }
+            }
+        },
+        "environment": {
+            "type": "string",
+            "title": "Environment",
+            "enum": [
+                "indoor",
+                "outdoor"
+            ],
+            "options": {
+                "enum_titles": [
+                    "Indoor",
+                    "Outdoor"
+                ]
+            },
+            "default": "indoor"
+        },
+        "floor": {
+            "title": "Floor (0=1F)",
+            "type": "integer"
+        },
+        "gnss": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "gnss_position_covariance_initial_threshold": {
+                    "type": "float",
+                    "default": "0.81",
+                    "title": "GNSS Position Covariance Initial Threshold (m^2)"
+                },
+                "gnss_track_error_threshold": {
+                    "type": "float",
+                    "default": "100",
+                    "title": "GNSS Track Error Threshold (m)"
+                }
+            }
+        },
+        "latitude": {
+            "title": "Latitude",
+            "type": "float",
+            "minimum": -180.0,
+            "maximum": 180.0
+        },
+        "localizer": {
+            "type": "string",
+            "enum": [
+                "SimpleRSSLocalizer",
+                "SimpleFloorLocalizer"
+            ],
+            "default": "SimpleRSSLocalizer"
+        },
+        "longitude": {
+            "title": "Longitude",
+            "type": "float",
+            "minimum": -90.0,
+            "maximum": 90.0
+        },
+        "map": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+                "node_id",
+                "frame_id",
+                "area",
+                "floor",
+                "latitude",
+                "longitude",
+                "rotate",
+                "load_state_filename",
+                "samples_filename",
+                "map_filename"
+            ],
+            "properties": {
+                "node_id": {
+                    "title": "Node ID",
+                    "type": "string",
+                    "readOnly": true
+                },
+                "frame_id": {
+                    "title": "Frame ID",
+                    "type": "string",
+                    "readOnly": true
+                },
+                "area": {
+                    "title": "Area code",
+                    "type": "integer",
+                    "readOnly": true
+                },
+                "floor": {
+                    "$ref": "#/definitions/floor",
+                    "readOnly": true
+                },
+                "latitude": {
+                    "$ref": "#/definitions/latitude",
+                    "readOnly": true
+                },
+                "longitude": {
+                    "$ref": "#/definitions/longitude",
+                    "readOnly": true
+                },
+                "rotate": {
+                    "$ref": "#/definitions/rotate",
+                    "readOnly": true
+                },
+                "load_state_filename": {
+                    "title": "Cartographer State",
+                    "type": "string",
+                    "readOnly": true
+                },
+                "samples_filename": {
+                    "title": "RSS Samples",
+                    "type": "string",
+                    "readOnly": true
+                },
+                "map_filename": {
+                    "title": "Map Filename",
+                    "type": "string",
+                    "readOnly": true
+                },
+                "rssi_gain": {
+                    "$ref": "#/definitions/rssi_gain"
+                },
+                "ble": {
+                    "title": "BLE config",
+                    "options": {
+                        "collapsed": true
+                    },
+                    "properties": {
+                        "rssi_gain": {
+                            "$ref": "#/definitions/rssi_gain"
+                        }
+                    }
+                },
+                "wifi": {
+                    "title": "Wifi config",
+                    "options": {
+                        "collapsed": true
+                    },
+                    "properties": {
+                        "rssi_gain": {
+                            "$ref": "#/definitions/rssi_gain"
+                        }
+                    }
+                },
+                "environment": {
+                    "$ref": "#/definitions/environment"
+                },
+                "cartographer": {
+                    "$ref": "#/definitions/cartographer_config"
+                }
+            }
+        },
+        "rotate": {
+            "title": "Rotate (degree)",
+            "type": "float",
+            "minimum": -180.0,
+            "maximum": 180.0
+        },
+        "rssi_gain": {
+            "type": "float",
+            "title": "RSSI Gain (db)",
+            "default": 0
+        },
+        "rssi_offset_list": {
+            "type": "object",
+            "title": "RSSI Offset List",
+            "options": {
+                "collapsed": true
+            },
+            "properties": {
+                "cabot2-ace": {
+                    "$ref": "#/definitions/rssi_offset_value"
+                },
+                "cabot2-gt1": {
+                    "$ref": "#/definitions/rssi_offset_value"
+                },
+                "cabot2-gtm-outdoor": {
+                    "$ref": "#/definitions/rssi_offset_value"
+                },
+                "cabot2-gtm": {
+                    "$ref": "#/definitions/rssi_offset_value"
+                },
+                "cabot2-gtmx22": {
+                    "$ref": "#/definitions/rssi_offset_value"
+                },
+                "cabot3-ace2": {
+                    "$ref": "#/definitions/rssi_offset_value"
+                },
+                "cabot3-gtmx23": {
+                    "$ref": "#/definitions/rssi_offset_value"
+                },
+                "cabot3-s1": {
+                    "$ref": "#/definitions/rssi_offset_value"
+                }
+            },
+            "additionalProperties": false
+        },
+        "rssi_offset_value": {
+            "type": "float",
+            "headerTemplate": "{{title}} (db)",
+            "default": 0
         }
     }
 }

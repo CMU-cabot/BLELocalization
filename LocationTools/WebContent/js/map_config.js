@@ -51,12 +51,14 @@ function createJsonEditor() {
 
     jsonEditor = new JSONEditor($("#editor_holder")[0], {
         ajax: true,
-        theme: "spectre",
+        disable_edit_json: true,
         iconlib: "spectre",
         schema: {
             $ref: "../schema/map_config.json",
         },
-        startval: data.maps
+        show_opt_in: true,
+        startval: data.maps,
+        theme: "spectre",
     });
 }
 

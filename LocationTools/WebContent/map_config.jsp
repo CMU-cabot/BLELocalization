@@ -60,14 +60,20 @@ THE SOFTWARE.
 <link rel="stylesheet" type="text/css" href="css/spectre-0.5.9/dist/spectre-icons.min.css">
 <link rel="stylesheet" type="text/css" href="css/common.css">
 <style type="text/css">
-div.form-group label, div.form-group input {
+div.form-group label,
+div.form-group input,
+div.form-group select,
+div.form-group div[data-container-for=radio] {
 	display: inline-block;
 	max-width: 50%;
 	padding: 5px 8px;
 }
 div.form-group label {
 	min-width: 12em;
-	text-align: right;
+	text-align: left;
+}
+div[data-theme="spectre"] .je-panel {
+	margin-left: 2.0em !important;
 }
 
 </style>
