@@ -1,3 +1,60 @@
+function exportMaps() {
+    let maps = floorplans.filter((e) => { return e.group == "mapping";});
+    data = {
+        maps: {
+            map_list: []
+        },
+        attachment: []
+    };
+    let selected_map = $('input[group="anchor"]:checked').prop("obj");
+    var floors = {}
+    maps.forEach((f) => {
+        if (f.attachment !== undefined) {
+            data.attachment.push(...f.attachment);
+        }
+        if (selected_map === f) {
+            data.maps.anchor = {
+                latitude: f.lat,
+                longitude: f.lng,
+                rotate: f.rotate,
+                floor: f.floor,
+            }
+        }
+        let name = f._metadata.name;
+        let floor = f.floor;
+        floors[floor] = floors[floor] || 0;
+        let area = floors[floor]++;
+        data.maps.map_list.push({
+            node_id: `carto${floor}_${area}`,
+            frame_id: `map_carto${floor}_${area}`,
+            latitude: f.lat,
+            longitude: f.lng,
+            rotate: f.rotate,
+            floor: floor,
+            area: area,
+            load_state_filename: `package://${DB_NAME}/maps/${name}.pbstream`,
+            samples_filename: `package://${DB_NAME}/maps/${name}.loc.samples.json`,
+            map_filename: `package://${DB_NAME}/maps/${name}.yaml`,
+        })
+    });
+
+    var actionURL = 'data?' + $.param({
+        'dummy' : new Date().getTime(),
+        'export' : 'maps.zip',
+        'filename' : 'maps.zip'
+    });
+    $('form#maps_form').remove();
+    var form = $('<form>', {
+        'id' : 'maps_form',
+        'method' : 'post',
+        'action' : actionURL
+    }).append($('<input>', {
+        'type' : 'hidden',
+        'name' : 'maps',
+        'value' : JSON.stringify(data),
+    })).appendTo($('body')).submit();
+}
+
 /*
     importAttachments will read files from a directory
     if floorplans.json file is found, it will try to upload all the floorplans including images
@@ -29,7 +86,17 @@ function importAttachments(files){
             'rotate' : floorplan.rotate,
             'zIndex' : floorplan.zIndex,
         };
-        uploadFloorplan(metadata, uploadData, imageFile, callback);
+        getImageSize(imageFile, (width, height) => {
+            uploadData.width = width;
+            uploadData.height = height;
+            uploadFile(imageFile, (filename) => {
+                uploadData.filename = filename
+                uploadFloorplan(matadata, uploadData, (data) => {
+                    console.log(data);
+                    callback();
+                });
+            });
+        });
     }
 
     for (var i = 0; i < files.length; i++) {
@@ -61,34 +128,22 @@ function importAttachments(files){
 }
 
 function importMappingData(files) {
-    function simpleYAMLParse(yamlString) {
-        let obj = {};
-        let lines = yamlString.split('\n');
-        for (let line of lines) {
-            console.log(line);
-            if (line.trim() === '' || line.trim().startsWith('#')) continue;
-            let [key, value] = line.split(/:(.+)/);
-            if (key && value !== undefined) {
-                key = key.trim();
-                value = parseFloat(value.trim());
-                obj[key] = value;
-            }
-        }
-        return obj;
-    }
-    
     function processMap(key, files, callback) {
         var yamlFile = null;
         var imageFile = null;
+        var attachments = [];
         for(const file of files) {
             var path = file.webkitRelativePath || file.name;
             if (path.includes(".txt")) {
                 console.log(".txt", path);
                 yamlFile = file;
             }
-            if (path.includes('.png')) {
+            else if (path.includes('.png')) {
                 console.log(".png", path);
                 imageFile = file;
+            }
+            else {
+                attachments.push(file);
             }
         }
 
@@ -119,8 +174,30 @@ function importMappingData(files) {
                 'lng': lnglat[0],
                 'rotate': 0,
                 'zIndex': 0,
+                'attachment': [],
             };
-            uploadFloorplan(metadata, uploadData, imageFile, callback);
+
+            function uploadAttachment() {
+                if (attachments.length == 0) {
+                    uploadFloorplan(metadata, uploadData, callback);
+                } else {
+                    attachment = attachments.shift()
+                    uploadFile(attachment, (filename) => {
+                        uploadData.attachment.push({
+                            "filename": attachment.name,
+                            "id": filename,
+                        });
+                        uploadAttachment();
+                    });
+                }
+            }
+
+            uploadFile(imageFile, (filename, width, height) => {
+                uploadData.width = width;
+                uploadData.height = height;
+                uploadData.filename = filename;
+                uploadAttachment();
+            });
         }
         fr.readAsText(yamlFile);
     }
@@ -147,47 +224,63 @@ function importMappingData(files) {
     }
 }
 
-function uploadFloorplan(metadata, uploadData, imageFile, callback){
+function getImageSize(imageFile, callback) {
     var reader = new FileReader();
     reader.onload = function () {
         var img = new Image();
         img.onload = function () {
-            var width = img.width;
-            var height = img.height;
-            var formData = new FormData();
-            formData.append('file', imageFile, imageFile.name);
-            console.log(formData);
-            dataUtil.postFormData({
-                'type': "file",
-                'data': formData,
-                'method': 'POST',
-                'success': function (data) {
-                    console.log(data);
-                    uploadData.width = width;
-                    uploadData.height = height;
-                    uploadData.filename = data.filename
-                    console.log(uploadData);
-                    dataUtil.postData({
-                        'type': floorplanDataType,
-                        'data': {
-                            '_metadata': JSON.stringify(metadata),
-                            'data': JSON.stringify(uploadData)
-                        },
-                        'success': function (data) {
-                            console.log(data);
-                            callback();
-                        },
-                        'error': function (xhr, text, error) {
-                            $('#message').text(error || text);
-                        }
-                    });
-                },
-                'error': function (xhr, text, error) {
-                    $('#message').text(error || text);
-                }
-            });
+            callback(img.width, image.height);
         }
         img.src = reader.result;
     }
     reader.readAsDataURL(imageFile);
+}
+
+function uploadFile(imageFile, callback){
+    var formData = new FormData();
+    formData.append('file', imageFile, imageFile.name);
+    console.log(formData);
+    dataUtil.postFormData({
+        'type': "file",
+        'data': formData,
+        'method': 'POST',
+        'success': function (data) {
+            callback(data.filename);
+        },
+        'error': function (xhr, text, error) {
+            $('#message').text(error || text);
+        }
+    });
+}
+
+function uploadFloorplan(metadata, uploadData, callback) {
+    dataUtil.postData({
+        'type': floorplanDataType,
+        'data': {
+            '_metadata': JSON.stringify(metadata),
+            'data': JSON.stringify(uploadData)
+        },
+        'success': function (data) {
+            callback(data);
+        },
+        'error': function (xhr, text, error) {
+            $('#message').text(error || text);
+        }
+    });
+}
+
+function simpleYAMLParse(yamlString) {
+    let obj = {};
+    let lines = yamlString.split('\n');
+    for (let line of lines) {
+        console.log(line);
+        if (line.trim() === '' || line.trim().startsWith('#')) continue;
+        let [key, value] = line.split(/:(.+)/);
+        if (key && value !== undefined) {
+            key = key.trim();
+            value = parseFloat(value.trim());
+            obj[key] = value;
+        }
+    }
+    return obj;
 }

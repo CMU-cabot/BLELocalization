@@ -52,6 +52,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
 import hulo.floormaps.utils.FloormapsArchiver;
+import hulo.floormaps.utils.MapsArchiver;
 import hulo.localization.servlet.MongoService;
 
 public class ExportUtils {
@@ -67,6 +68,14 @@ public class ExportUtils {
 		if ("floormaps.json".equals(format)) {
 			try {
 				FloormapsArchiver.export(filename, request, response);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return;
+		}
+		if ("maps.zip".equals(format)) {
+			try {
+				MapsArchiver.export(filename, request, response);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}

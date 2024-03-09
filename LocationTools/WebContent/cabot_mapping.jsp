@@ -12,7 +12,7 @@ String dbname = (db == null) ? "(default)" : "("+db+")";
 
 JSONObject profile = (JSONObject)userBean.getProfile(request);
 if (profile == null || !userBean.isDbAllowed(request, db)) {
-	response.sendRedirect("user_login.jsp?logout=true&redirect_url=" + db + "/floorplans.jsp");
+	response.sendRedirect("user_login.jsp?logout=true&redirect_url=" + db + "/cabot_mapping.jsp");
 	return;
 }
 %>
@@ -67,21 +67,22 @@ THE SOFTWARE.
 <script type="text/javascript" src="js/mapview.js"></script>
 <script type="text/javascript" src="js/floorplan_editor.js"></script>
 <script type="text/javascript" src="js/overlay.js"></script>
-<script type="text/javascript" src="js/floorplans.js"></script>
+<script type="text/javascript" src="js/floorplans2.js"></script>
 <script type="text/javascript" src="js/cabot_mapping.js"></script>
 <script type="text/javascript" src="js/util.js"></script>
 <script type="text/javascript" src="js/commons.js"></script>
 <script type="text/javascript" src="js/hokoukukan.js"></script>
+<script>
+	const DB_NAME="<%= db %>";
+</script>
 </head>
 <body>
 	<span style="font-weight: bold"><%=profile.getString("_id")%></span>
 	<a href="floorplans.jsp?logout=true">log out</a> |
-	<a href="user_password.jsp?redirect_url=floorplans.jsp">change password</a> |
+	<a href="user_password.jsp?redirect_url=cabot_mapping.jsp">change password</a> |
 	<a href="../">db list</a> | 
 	<span style="font-weight: bold">Manage CaBot Mapping</span> |
-	<a href="floorplans.jsp">Manage Floor Plan</a> |
-	<a href="sampling.jsp">Manage Samplings</a> |
-	<a href="data_composer.jsp">Data Compose Tool</a>
+	<a href="floorplans.jsp">Manage Floor Plan</a>
 	<br>
 
 	<div id='message' style='color: red;'></div>
@@ -99,6 +100,10 @@ THE SOFTWARE.
 				<input type="file" id="import_mapping_data" webkitdirectory directory multiple
 				 class="upload" onchange="importMappingData(this.files)"/>
 			</div>
+			|
+			<button id="exportMaps" onclick="exportMaps('maps.zip')">
+				Export Maps
+			</button>
 		</div>
 		<div class="ui-widget-content" id="data_table"></div>
 	</div>

@@ -286,7 +286,7 @@ public class MongoService {
 		return false;
 	}
 
-	private boolean readFile(GridFSDBFile dbFile, OutputStream os) throws IOException {
+	public boolean readFile(GridFSDBFile dbFile, OutputStream os) throws IOException {
 		InputStream is = null;
 		try {
 			is = dbFile.getInputStream();
