@@ -273,7 +273,7 @@
         },
         "map": {
             "type": "object",
-            "additionalProperties": false,
+            "additionalProperties": true,
             "required": [
                 "node_id",
                 "frame_id",

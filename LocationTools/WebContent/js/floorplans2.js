@@ -268,6 +268,7 @@ function showMapOnGlobal(opt) {
 					'stateSave': true,
 					'scrollY': 230,
 				});
+				$("input[type=radio]:first").prop("checked", true);
 			},
 			'error' : function(xhr, text, error) {
 				$('#message').text(error || text);
@@ -572,9 +573,13 @@ function showMapOnGlobal(opt) {
 				console.error(info);
 			}
 
-			var select = $('<input type="radio" name="group_edit" group="anchor">')
-			               .prop('obj', obj)
-						   .prop('checked', first);
+			var select = null;
+
+			if (obj.group == "mapping") {
+				select = $('<input type="radio" name="group_edit" group="anchor">')
+					.prop('obj', obj)
+					.prop('checked', first);
+			}
 			first = false;
 			// var image = new Image();
 

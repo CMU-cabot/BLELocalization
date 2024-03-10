@@ -29,8 +29,39 @@ function getMapsJson(maps, selected_map) {
     };
     var floors = {}
     maps.forEach((f) => {
+        extra = {};
+        package_prefix = `package://${DB_NAME}/maps`
         if (f.attachment !== undefined) {
             data.attachment.push(...f.attachment);
+            f.attachment.forEach((a) => {
+                let exts = [".pbstream", ".loc.samples.json", ".pgm", ".xcf", ".yaml"]
+                for(let ext of exts) {
+                    if (a.filename.endsWith(ext)) {
+                        return;
+                    }
+                }
+                if (a.filename.endsWith(".pbstream")) {
+                    var count = 2;
+                    while (`load_state_filename${count}` in extra) {
+                        count++;
+                    }
+                    extra[`load_state_filename${count}`] = `${package_prefix}/${a.filename}`;
+                }
+                if (a.filename.endsWith(".json")) {
+                    var count = 2;
+                    while (`samples_filename${count}` in extra) {
+                        count++;
+                    }
+                    extra[`samples_filename${count}`] = `${package_prefix}/${a.filename}`;
+                }
+                if (a.filename.endsWith(".yaml")) {
+                    var count = 2;
+                    while (`map_filename${count}` in extra) {
+                        count++;
+                    }
+                    extra[`map_filename${count}`] = `${package_prefix}/${a.filename}`;
+                }
+            })
         }
         if (selected_map === f) {
             data.maps.anchor = {
@@ -52,10 +83,13 @@ function getMapsJson(maps, selected_map) {
             rotate: f.rotate,
             floor: floor,
             area: area,
-            load_state_filename: `package://${DB_NAME}/maps/${name}.pbstream`,
-            samples_filename: `package://${DB_NAME}/maps/${name}.loc.samples.json`,
-            map_filename: `package://${DB_NAME}/maps/${name}.yaml`,
-        })
+            load_state_filename: `${package_prefix}/${name}.pbstream`,
+            samples_filename: `${package_prefix}/${name}.loc.samples.json`,
+            map_filename: `${package_prefix}/${name}.yaml`,
+        });
+        if (Object.keys(extra).length > 0) {
+            Object.assign(data.maps.map_list[data.maps.map_list.length-1], extra);
+        }
     });
     return data;
 }
