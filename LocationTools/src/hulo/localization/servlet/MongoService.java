@@ -67,7 +67,7 @@ import hulo.localization.data.DataUtils;
 import hulo.localization.utils.CloudUtils;
 
 public class MongoService {
-	private static final String MONGO_HOST = "mongodb://localhost:27017";
+	private static final String DEFAULT_MONGO_HOST = "mongodb://localhost:27017";
 	public static final String DB_NAME_PREFIX = "lsdb";
 
 	private static MongoService defaultMongoClient = null;
@@ -154,7 +154,11 @@ public class MongoService {
 					return new MongoService(url, name, cert, create);
 				}
 			}
-			return new MongoService(MONGO_HOST, name, create);
+			String mongoHost = System.getenv("MONGO_HOST");
+			if (mongoHost == null) {
+				mongoHost = DEFAULT_MONGO_HOST;
+			}
+			return new MongoService(mongoHost, name, create);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
