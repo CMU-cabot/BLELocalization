@@ -263,6 +263,16 @@ public class DataServlet extends HttpServlet {
 			return;
 		}
 
+		if (request.getParameter("convert") != null) {
+			try {
+				hulo.model.utils.ConvertUtils.convert(request.getParameter("convert"), request, response);
+			} catch (OutOfMemoryError e) {
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+				e.printStackTrace();
+			}
+			return;
+		}
+
 		DBCollection mCollRef = mDS.getCollection("refpoints");
 		DBCollection mCollSamp = mDS.getCollection("samplings");
 

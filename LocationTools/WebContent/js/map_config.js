@@ -22,8 +22,7 @@
 
 var floorplanDataType = "floorplans";
 
-$(document).ready(() => {
-    $("button").button();
+function importMapYamlFromData() {
     dataUtil.getData({
         'type': floorplanDataType,
         'data': {
@@ -36,18 +35,25 @@ $(document).ready(() => {
         },
         'success': function (data) {
             floorplans = data;
-            createJsonEditor();
+            let maps = floorplans.filter((e) => { return e.group == "mapping"; });
+            data = getMapsJson(maps, maps[0]);
+            createJsonEditor(data.maps);
         },
         'error': function (xhr, text, error) {
             $('#message').text(error || text);
         }
     });
-})
+}
 
-function createJsonEditor() {
-    let maps = floorplans.filter((e) => { return e.group == "mapping"; });
-    data = getMapsJson(maps, maps[0]);
-    console.log(data.maps);
+
+function createJsonEditor(maps) {
+    if (!$('#editor_holder').is(':empty')) {
+        let response = window.confirm("Do you want to overwrite the editor?");
+        if (!response) {
+            return;
+        }
+        $("#editor_holder").empty();
+    }
 
     jsonEditor = new JSONEditor($("#editor_holder")[0], {
         ajax: true,
@@ -57,7 +63,7 @@ function createJsonEditor() {
             $ref: "../schema/map_config.json",
         },
         show_opt_in: true,
-        startval: data.maps,
+        startval: maps,
         theme: "spectre",
     });
 }
@@ -79,4 +85,31 @@ function exportMapYaml() {
         'name' : 'maps',
         'value' : JSON.stringify(data),
     })).appendTo($('body')).submit();
+}
+
+function importMapYaml(files) {
+    if (files.length != 1) {
+        return;
+    }
+    var fr = new FileReader();
+    fr.onload = () => {
+        $.ajax({
+            url: 'data',
+            type: 'POST',
+            data: {
+                data: fr.result,
+                convert: 'yaml2json'
+            },
+            dataType: "json",
+            success: function(maps) {
+                //console.log("Converted JSON:", response);
+                //var maps = JSON.parse(response);
+                createJsonEditor(maps);
+            },
+            error: function(xhr, status, error) {
+                console.log("Error:", error);
+            }
+        });
+    }
+    fr.readAsText(files[0]);
 }

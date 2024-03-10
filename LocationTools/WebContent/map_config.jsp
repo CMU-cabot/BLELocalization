@@ -60,6 +60,10 @@ THE SOFTWARE.
 <link rel="stylesheet" type="text/css" href="css/spectre-0.5.9/dist/spectre-icons.min.css">
 <link rel="stylesheet" type="text/css" href="css/common.css">
 <style type="text/css">
+div {
+	margin: 0px 8px;
+}
+
 div.form-group label,
 div.form-group input,
 div.form-group select,
@@ -74,6 +78,7 @@ div.form-group label {
 }
 div[data-theme="spectre"] .je-panel {
 	margin-left: 2.0em !important;
+	border-left: 2px solid lightgray;
 }
 
 </style>
@@ -104,7 +109,15 @@ div[data-theme="spectre"] .je-panel {
 
     <h2 class="ui-widget-header">CaBot Mapping - Map Config - <%= dbname %></h2>
 	<div style="margin: 10px">
-		<button onclick="exportMapYaml();">
+		<button class="btn" onclick="importMapYamlFromData();">
+			Get Map Yaml From Data
+		</button>
+		<div class="fileUpload btn">
+			<span>Import Map Yaml</span>
+			<input type="file" id="import_map_yaml"
+				class="upload" onchange="importMapYaml(this.files)"/>
+		</div>
+		<button class="btn" onclick="exportMapYaml();">
 			Export Map Yaml
 		</button>
 	</div>
