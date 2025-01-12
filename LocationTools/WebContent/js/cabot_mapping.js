@@ -188,6 +188,14 @@ function importMappingData(files) {
                 console.log(".png", path);
                 imageFile = file;
             }
+            else if (path.includes('.db3')) {
+                console.log(".db3", path, "skipped");
+                continue;
+            }
+            else if (path.includes('metadata.yaml')) {
+                console.log("metadata.yaml", path, "skipped");
+                continue;
+            }
             else {
                 attachments.push(file);
             }
@@ -266,6 +274,9 @@ function importMappingData(files) {
         var file = files[i];
         var path = file.webkitRelativePath || file.name;
         filename = path.split('/').pop();
+        if (filename.includes('.db3') || filename == "metadata.yaml") {
+            continue;
+        }
         prefix = filename.split('.')[0];
         prefixMap[prefix] = prefixMap[prefix] || [];
         prefixMap[prefix].push(file);
